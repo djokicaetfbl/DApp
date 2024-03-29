@@ -14,6 +14,8 @@ builder.Services.AddDbContext<DataContext>( opt =>
 //builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(); //Cross-Origin Resource Sharing - komunikacija izmedju fronend-a i bekenda (razliciti serveri, razliciti domeni)
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,6 +28,8 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200")); //Cross-Origin Resource Sharing - komunikacija izmedju fronend-a i bekenda 
 
 app.MapControllers();
 
