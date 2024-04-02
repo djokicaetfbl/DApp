@@ -11,6 +11,7 @@ export class AppComponent implements OnInit {
   users: any;
 
   constructor(private http: HttpClient) {}
+
   ngOnInit(): void {
     console.log('usao');
     //observable is stream of data

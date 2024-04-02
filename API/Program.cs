@@ -1,20 +1,17 @@
-using API.Data;
-using Microsoft.EntityFrameworkCore;
+
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-builder.Services.AddDbContext<DataContext>( opt =>
-{
-    opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+builder.Services.AddApplicationService(builder.Configuration); // extension method for ApplicationServices
 
-builder.Services.AddCors(); //Cross-Origin Resource Sharing - komunikacija izmedju fronend-a i bekenda (razliciti serveri, razliciti domeni)
+
+builder.Services.AddIdentityServices(builder.Configuration); // middleware // extension method for Identity
 
 var app = builder.Build();
 
@@ -27,9 +24,10 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200")); //Cross-Origin Resource Sharing - komunikacija izmedju fronend-a i bekenda 
+
+app.UseAuthentication(); // bitan redosljed isppod UseCors...WithOrigins !
+app.UseAuthorization(); // bitno da ide ispod Authorization !
 
 app.MapControllers();
 
