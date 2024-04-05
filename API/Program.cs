@@ -1,7 +1,3 @@
-
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,7 +23,7 @@ app.UseHttpsRedirection();
 app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200")); //Cross-Origin Resource Sharing - komunikacija izmedju fronend-a i bekenda 
 
 app.UseAuthentication(); // bitan redosljed isppod UseCors...WithOrigins !
-app.UseAuthorization(); // bitno da ide ispod Authorization !
+app.UseAuthorization(); // bitno da ide ispod UseAuthentication !
 
 app.MapControllers();
 
