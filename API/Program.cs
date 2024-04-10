@@ -1,4 +1,5 @@
 using API.Extensions;
+using API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,8 @@ builder.Services.AddIdentityServices(builder.Configuration); // middleware // ex
 
 var app = builder.Build();
 
+
+
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
@@ -19,6 +22,8 @@ var app = builder.Build();
 //}
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionMiddleware>(); // dodana klasa ExceptionMiddleware
 
 app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200")); //Cross-Origin Resource Sharing - komunikacija izmedju fronend-a i bekenda 
 

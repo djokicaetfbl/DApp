@@ -34,7 +34,7 @@ export class NavComponent implements OnInit {
   login() {
     this.accountService.login(this.model).subscribe({
       next: () => this.router.navigateByUrl('/members'),
-      error: (error) => this.toastr.error(error.error),
+      //error: (error) => this.toastr.error(error.error), // nema potrebe ovdje naglasavati error jer imamo interceptor
       //complete: () => console.log('Completed request!'),
     });
   }
