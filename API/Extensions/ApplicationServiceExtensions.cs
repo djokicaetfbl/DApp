@@ -17,8 +17,10 @@ namespace API.Extensions
             //builder.Services.AddEndpointsApiExplorer();
             //builder.Services.AddSwaggerGen();
 
-            services.AddCors(); //Cross-Origin Resource Sharing - komunikacija izmedju fronend-a i bekenda (razliciti serveri, razliciti domeni)
+            services.AddCors(); //Cross-Origin Resource Sharing - komunikacija izmedju frontend-a i bekenda (razliciti serveri, razliciti domeni)
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IUserRepository, UserRepository>(); // registrovanje  servisa - repozitorija
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             return services;
         }
