@@ -61,6 +61,7 @@ namespace API.Data
             //    .SingleOrDefaultAsync();
 
             return await _context.Users
+                        .Include(x => x.Photos)
                         .Where(x => x.UserName == username)
                         .ProjectTo<MemberDto>(_mapper.ConfigurationProvider) // Sa ProjectTo ne moramo da radimo Eager loading, kao sto je slucaj iznada sa Select i new object MemberDto !
                         .SingleOrDefaultAsync();
@@ -69,6 +70,7 @@ namespace API.Data
         public async Task<IEnumerable<MemberDto>> GetMembersAsync()
         {
             return await _context.Users
+                            .Include(x => x.Photos)
                             .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
                             .ToListAsync();
         }

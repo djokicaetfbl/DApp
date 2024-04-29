@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map } from 'rxjs';
 import { User } from '../_models/user';
+import { environment } from 'src/environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AccountService {
-  baseUrl = 'https://localhost:5001/api/';
+  baseUrl = environment.apiUrl; //'https://localhost:5001/api/';
   //BehaviourSubject daje inicijalnu vrijednost, pomocu njega sirom aplikacije dobijamo informaciju o tome da li je korisnik logovan
   private currentUserSource = new BehaviorSubject<User | null>(null); // moze biti User ili null
   currentUser$ = this.currentUserSource.asObservable(); // dolar naglasava da je u pitanju observable
