@@ -1,7 +1,4 @@
-﻿using API.Entities;
-using API.Extensions;
-
-namespace API.DTOs
+﻿namespace API.DTOs
 {
     public class MemberDto // Data Transfer Object -> ono sto vracamo kao response nekog request-a npr
     {
