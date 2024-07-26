@@ -53,7 +53,7 @@ namespace API.Controllers
         {
             //Find is good when we know primary (composiste) key, in another case FirstOrDefault is better
             // ovde cemo koristiti signe or degault je ce vratit jedan jer sigurno imamo jedinstven username. FirstOrDefault ako ima vise username sa istim imenom vratit ce prvi, a SingleOrDefault ce baciti exception.
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == loginDto.Username);
+            var user = await _context.Users.Include(x => x.Photos).SingleOrDefaultAsync(x => x.UserName == loginDto.Username);
 
             if (user is null)
                 return Unauthorized("Invalid username!");
@@ -70,7 +70,8 @@ namespace API.Controllers
             return new UserDto
             {
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
             };
         }
 

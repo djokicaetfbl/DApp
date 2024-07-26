@@ -29,7 +29,7 @@
         </div>
         <div>
           <strong>Last active:</strong>
-          <p>{{ member.lastActive }}</p>
+          <p>{{ member.lastActive | date : "dd/MM/yyyy" }}</p>
         </div>
         <div>
           <strong>Member since:</strong>
@@ -95,7 +95,8 @@
         </form>
       </tab>
       <tab heading="Edit photos">
-        <p>Photo edit will go here</p>
+        <!-- [member]="member" parent child communication  -->
+        <app-photo-editor [member]="member"></app-photo-editor>
       </tab>
     </tabset>
   </div>
