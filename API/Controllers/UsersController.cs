@@ -83,8 +83,8 @@ namespace API.Controllers
             if (await _userRepository.SaveAllAsync()) /*return _mapper.Map<PhotoDto>(photo);*/
             {
                 return CreatedAtAction(nameof(GetUser), new { username = user.UserName }, _mapper.Map<PhotoDto>(photo));
-                //nameof(GetUser) - ovo je lokacija na kojoj mozemo da pronadjemo novokreirani objekat, ovo je neaziv kreiranog objekta new { username = user.UserName }
-                // i ovo se dobijememo u response 201 kao status Created -> https://localhost:4200/api/Users/lisa , ovo se nalazi u header-u zahtjeva u sekciji Locations
+                //CreatedAtAction - nameof(GetUser) - ovo je lokacija na kojoj mozemo da pronadjemo novokreirani objekat, ovo je naziv kreiranog objekta new { username = user.UserName }
+                // i ovo se dobijemo u response 201 kao status Created -> https://localhost:4200/api/Users/lisa , ovo se nalazi u header-u zahtjeva u sekciji Locations
             }
 
             return BadRequest("Problem adding photo");

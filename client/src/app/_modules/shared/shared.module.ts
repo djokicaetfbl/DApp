@@ -6,6 +6,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { FileUploadModule } from 'ng2-file-upload';
 import { PhotoEditorComponent } from 'src/app/members/photo-editor/photo-editor.component';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 @NgModule({
   declarations: [],
   imports: [
@@ -19,6 +20,7 @@ import { PhotoEditorComponent } from 'src/app/members/photo-editor/photo-editor.
       type: 'line-scale-party',
     }),
     FileUploadModule,
+    BsDatepickerModule.forRoot(),
   ],
   exports: [
     BsDropdownModule,
@@ -26,6 +28,7 @@ import { PhotoEditorComponent } from 'src/app/members/photo-editor/photo-editor.
     TabsModule,
     NgxSpinnerModule,
     FileUploadModule,
+    BsDatepickerModule,
   ],
 })
 export class SharedModule {}

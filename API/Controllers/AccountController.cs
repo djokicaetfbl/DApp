@@ -2,6 +2,7 @@
 using API.DTOs;
 using API.Entities;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
@@ -13,11 +14,13 @@ namespace API.Controllers
     {
         private readonly DataContext _context;
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
 
-        public AccountController(DataContext context, ITokenService tokenService)
+        public AccountController(DataContext context, ITokenService tokenService, IMapper mapper)
         {
             _context = context;
             _tokenService = tokenService;
+            _mapper = mapper;
         }
         //Use query strings for optional or filtering/sorting parameters and when flexibility is required. Use standard parameters in the route path for essential parameters that are part of the 
         //route's structure and when cleaner, more readable URLs are desired. Choose the approach that best fits the specific requirements and design considerations of your application.
@@ -28,14 +31,20 @@ namespace API.Controllers
             if (await UserExists(registerDto.Username))
                 return BadRequest("Username is taken");
 
+            var user = _mapper.Map<AppUser>(registerDto);
+
             using var hmac = new HMACSHA512(); // password salt, with using, we tell, we do not need this method again, please dispose
 
-            var user = new AppUser
-            {
-                UserName = registerDto.Username.ToLower(),
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-                PasswordSalt = hmac.Key
-            };
+            user.UserName = registerDto.Username.ToLower();
+            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
+            user.PasswordSalt = hmac.Key;
+
+            //var user = new AppUser
+            //{
+            //    UserName = registerDto.Username.ToLower(),
+            //    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
+            //    PasswordSalt = hmac.Key
+            //}; // ovo je bez mapper-a
 
 
             _context.Users.Add(user);
@@ -44,7 +53,8 @@ namespace API.Controllers
             return Ok(new UserDto
             {
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                KnownAs = user.KnowAs,
             });
         }
 
@@ -71,7 +81,8 @@ namespace API.Controllers
             {
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),
-                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
+                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
+                KnownAs = user.KnowAs
             };
         }
 
