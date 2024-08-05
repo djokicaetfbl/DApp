@@ -1,6 +1,7 @@
 ﻿using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Authorize]
-    public class UsersController : BaseApiController
+    public class UsersController : BaseApiController // u BaseApiController stavljamo feature porebne za projekat
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
@@ -24,7 +25,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
+        public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
         {
             //var users = await _userRepository.GetUsersAsync();
 
@@ -32,7 +33,17 @@ namespace API.Controllers
 
             //return Ok(usersToReturn); // ovde nastupa data transfer object
 
-            var users = await _userRepository.GetMembersAsync();
+            var curretnUser = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+            userParams.CurrentUsername = curretnUser.UserName;
+
+            if(string.IsNullOrEmpty(userParams.Gender))
+            {
+                userParams.Gender = curretnUser.Gender == "male" ? "female" : "male";
+            }
+
+            var users = await _userRepository.GetMembersAsync(userParams);
+            Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages));
+
             return Ok(users);
         }
 
