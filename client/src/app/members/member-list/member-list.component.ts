@@ -41,6 +41,7 @@ export class MemberListComponent {
   }
 
   loadMembers() {
+    console.log('Djole: ' + this.userParams?.gender);
     if (this.userParams) {
       this.memberService.setUserParams(this.userParams);
       this.memberService.getMembers(this.userParams).subscribe({
