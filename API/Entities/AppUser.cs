@@ -17,9 +17,10 @@ public class AppUser
     public string City { get; set; }
     public string Country { get; set; }
     public List<Photo> Photos { get; set; } = []; // new () --> isto je
-
     public List<UserLike> LikedByUsers { get; set; }
     public List<UserLike> LikedUsers { get; set; }
+    public List<Message> MessagesSent { get; set; }
+    public List<Message> MessagesReceived { get; set; }
 
     //public int GetAge()
     //{

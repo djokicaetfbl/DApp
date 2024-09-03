@@ -59,8 +59,8 @@ export class RegisterComponent implements OnInit {
 
     // ovo je pristup be FormBuilder servisa
     // this.registerForm = new FormGroup({
-    //   username: new FormControl('', Validators.required),
-    //   password: new FormControl('', [
+    //   username: ', Validators.required),
+    //   password: new FormControl(''new FormControl(', [
     //     Validators.required,
     //     Validators.minLength(4),
     //     Validators.maxLength(8),
