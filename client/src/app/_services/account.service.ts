@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { BehaviorSubject, map } from 'rxjs';
 import { User } from '../_models/user';
 import { environment } from 'src/environments/environment.development';
@@ -37,12 +37,20 @@ export class AccountService {
   }
 
   setCurrentUser(user: User) {
-    localStorage.setItem('user', JSON.stringify(user.username));
+    user.roles = [];
+    const roles = this.getDecodedToken(user.token).role; // JSON role atribut vraca metoda pa mu odmah pristupamo
+    Array.isArray(roles) ? (user.roles = roles) : user.roles.push(roles);
+    //localStorage.setItem('user', JSON.stringify(user.username));
+    localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);
   }
 
   logout() {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
+  }
+
+  getDecodedToken(token: string) {
+    return JSON.parse(atob(token.split('.')[1]));
   }
 }
