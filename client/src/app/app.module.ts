@@ -32,6 +32,7 @@ import { PhotoManagamentComponent } from './admin/photo-managament/photo-managam
 import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
 import { RouteReuseStrategy } from '@angular/router';
 import { CustomRouteReuseStrategy } from './_services/customRouteReuseStrategy';
+import { ConfirmDialogComponent } from './modals/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { CustomRouteReuseStrategy } from './_services/customRouteReuseStrategy';
     UserManagamentComponent,
     PhotoManagamentComponent,
     RolesModalComponent,
+    ConfirmDialogComponent,
     //MemberMessagesComponent, standalone jer se ukljucje u MemberDetailComponent jer je i MemberDetailComponent standalone
   ],
   imports: [
