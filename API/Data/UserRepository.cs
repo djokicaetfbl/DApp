@@ -11,6 +11,7 @@ namespace API.Data
 {
     public class UserRepository : IUserRepository
     {
+        // NEMA VISE U REPOSITORY SAVECHANGESASYNC (SAVECHANGES) jer je to posao UnitOfWork PATTERN
         private readonly DataContext _context;
         private readonly IMapper _mapper;
 
@@ -18,6 +19,10 @@ namespace API.Data
         {
             _context = context;
             _mapper = mapper;
+        }
+
+        public UserRepository()
+        {
         }
 
         public async Task<AppUser> GetUserByIdAsync(int id)
@@ -39,10 +44,10 @@ namespace API.Data
                 .ToListAsync();
         }
 
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
-        }
+        //public async Task<bool> SaveAllAsync()
+        //{
+        //    return await _context.SaveChangesAsync() > 0;
+        //} NE TREBA VISE JER KORISTIMO UNIT OF WORK PATTERN PA JE U NJEMU IMPLEMENTIRANO!
 
         public void Update(AppUser user)
         {
@@ -99,6 +104,14 @@ namespace API.Data
             //                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
             //                .ToListAsync();
 
+        }
+
+        public async Task<string> GetUserGender(string username)
+        {
+            return await _context.Users
+                .Where(x => x.UserName == username)
+                .Select(x => x.Gender)
+                .FirstOrDefaultAsync();
         }
     }
 }

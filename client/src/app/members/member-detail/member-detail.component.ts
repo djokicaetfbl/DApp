@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GalleryItem, GalleryModule, ImageItem } from 'ng-gallery';
 import { TabDirective, TabsetComponent, TabsModule } from 'ngx-bootstrap/tabs';
@@ -9,6 +9,10 @@ import { MembersService } from 'src/app/_services/members.service';
 import { MemberMessagesComponent } from '../member-messages/member-messages.component';
 import { MessageService } from 'src/app/_services/message.service';
 import { Message } from 'src/app/_models/message';
+import { PresenceService } from 'src/app/_services/presence.service';
+import { AccountService } from 'src/app/_services/account.service';
+import { User } from 'src/app/_models/user';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-member-detail',
@@ -23,26 +27,38 @@ import { Message } from 'src/app/_models/message';
     MemberMessagesComponent,
   ], // dodajemo import-e module jer je u pitanju standalone komponenta
 })
-export class MemberDetailComponent implements OnInit {
+export class MemberDetailComponent implements OnInit, OnDestroy {
   @ViewChild('memberTabs', { static: true }) memberTabs?: TabsetComponent; // nas ViewChild ce sad da bude konstruisan odmah zahvaljujuci ovom static: true
   member: Member = {} as Member; // | undefined; // na ovja nacin smo definicali Member kao prazan objekat
   images: GalleryItem[] | undefined = [];
   activeTab?: TabDirective;
   messages: Message[] = [];
+  user?: User;
 
   /**Kada koristite static: true, Angular će pokušati da pronađe referencu na element odmah nakon što se konstruktor komponente izvrši, ali pre nego što se dogodi ngOnInit.
 To znači da će memberTabs biti dostupan već u ngOnInit metodi, čak i ako je deo statičkog sadržaja stranice (npr. nije uklonjen ili dodat dinamički pomoću *ngIf, *ngFor, itd.).
 Koristite ovu opciju kada želite da pristupite elementu ili komponenti u ngOnInit ili ranije, i kada je element prisutan u DOM-u bez obzira na eventualne promene tokom prikazivanja. */
 
   constructor(
-    private memberService: MembersService,
+    private accountService: AccountService,
     private route: ActivatedRoute,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+    public presenceService: PresenceService
+  ) {
+    this.accountService.currentUser$.pipe(take(1)).subscribe({
+      next: (user) => {
+        if (user) this.user = user;
+      },
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.messageService.stopHubConnection(); // zatvri messageHub kad se napusti kompinenta!
+  }
 
   ngOnInit(): void {
     this.route.data.subscribe({
-      next: (data) => (this.member = data['member']), // ovjde objekat dobijam pomocu: memberDetailedResolver, koji je prikacen na rutu: members/:username koja ucitava ovu MemberDetailComponent - u
+      next: (data) => (this.member = data['member']), // ovdje objekat dobijam pomocu: memberDetailedResolver, koji je prikacen na rutu: members/:username koja ucitava ovu MemberDetailComponent - u
     });
 
     this.route.queryParams.subscribe({
@@ -62,18 +78,21 @@ Koristite ovu opciju kada želite da pristupite elementu ili komponenti u ngOnIn
 
   onTabActivated(data: TabDirective) {
     this.activeTab = data;
-    if (this.activeTab.heading === 'Messages') {
-      this.loadMessages();
+    if (this.activeTab.heading === 'Messages' && this.user) {
+      // this.loadMessages();
+      this.messageService.createHubConnection(this.user, this.member.userName);
+    } else {
+      this.messageService.stopHubConnection();
     }
   }
 
-  loadMessages() {
-    if (this.member?.userName) {
-      this.messageService.getMessageThread(this.member.userName).subscribe({
-        next: (messages) => (this.messages = messages),
-      });
-    }
-  }
+  // loadMessages() { // sad poruke dobijamo preko singalR-a unutar onTabActivated metode!
+  //   if (this.member?.userName) {
+  //     this.messageService.getMessageThread(this.member.userName).subscribe({
+  //       next: (messages) => (this.messages = messages),
+  //     });
+  //   }
+  // }
 
   // loadMember() { // nema potrebe za loadMember jer sad se koristi memberDetailedResolver, pa se member dobija kao objekat iz njega
   //   var username = this.route.snapshot.paramMap.get('username');

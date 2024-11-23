@@ -29,6 +29,22 @@ namespace API.Extensions
                         ValidateIssuer = false,
                         ValidateAudience = false
                     };
+
+                    options.Events = new JwtBearerEvents // autentikacija na signalR
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs")) // '/hubs' smo nazvali u Program.cs
+                            {
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        } // na ovaj nacin SignalR ima pristup Bearer tokenu
+
+                    };
                 });
 
             //Authentication come first and than we do authorization

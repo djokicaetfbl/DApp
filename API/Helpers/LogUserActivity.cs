@@ -15,11 +15,11 @@ namespace API.Helpers
 
             var userId = resultContext.HttpContext.User.GetUserId(); // GetUsername() extension metod
 
-            var repo = resultContext.HttpContext.RequestServices.GetRequiredService<IUserRepository>();
-            var user = await repo.GetUserByIdAsync(userId);
+            var uow = resultContext.HttpContext.RequestServices.GetRequiredService<IUnitOfWork>();
+            var user = await uow.UserRepository.GetUserByIdAsync(userId);
             user.LastActive = DateTime.UtcNow;
 
-            await repo.SaveAllAsync();
+            await uow.Complete();
 
             //HttpContext sadrzi nas username claim, sadrzi nase servise kao sto je npr: IUserRepository, jer je definisan u services.AddScoped<IUserRepository, UserRepository>(); itd..
         }

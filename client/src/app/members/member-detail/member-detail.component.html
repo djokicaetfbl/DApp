@@ -8,6 +8,14 @@
         class="card-img-top img-thumbnail"
       />
       <div class="card-body">
+        <div
+          class="mb-2"
+          *ngIf="
+            (presenceService.onlineUsers$ | async)?.includes(member.userName)
+          "
+        >
+          <i class="class fa fa-user-circle text-success"> Online now</i>
+        </div>
         <div>
           <strong>Location:</strong>
           <p>{{ member.city }}, {{ member.country }}</p>
@@ -19,7 +27,7 @@
         <div>
           <strong>Last active:</strong>
           <!-- timeago pipe je iz ngx-timeago -->
-          <p>{{ member.lastActive + "Z" | timeago }}</p>
+          <p>{{ member.lastActive | timeago }}</p>
         </div>
         <div>
           <strong>Member since:</strong>
@@ -62,10 +70,11 @@
         </gallery>
       </tab>
       <tab heading="Messages" (selectTab)="onTabActivated($event)">
-        <app-member-messages
+        <!-- <app-member-messages
           [username]="member.userName"
           [messages]="messages"
-        ></app-member-messages>
+        ></app-member-messages> nemamo potrebe za messages propertijem: [messages]="messages" , jer to sad dobijamo preko SingalR-a-->
+        <app-member-messages [username]="member.userName"></app-member-messages>
       </tab>
     </tabset>
   </div>

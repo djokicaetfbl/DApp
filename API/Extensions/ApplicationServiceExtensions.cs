@@ -2,6 +2,7 @@
 using API.Helpers;
 using API.Interfaces;
 using API.Services;
+using API.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Extensions
@@ -43,13 +44,16 @@ namespace API.Extensions
 
             services.AddCors(); //Cross-Origin Resource Sharing - komunikacija izmedju frontend-a i bekenda (razliciti serveri, razliciti domeni)
             services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IUserRepository, UserRepository>(); // registrovanje  servisa - repozitorija
+            /*services.AddScoped<IUserRepository, UserRepository>();*/ // registrovanje  servisa - repozitorija, prebaceno u UnitOfWork
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<LogUserActivity>();
-            services.AddScoped<ILikesRepository, LikesRepository>();
-            services.AddScoped<IMessageRepository, MessageRepository>();
+            //services.AddScoped<ILikesRepository, LikesRepository>(); //prebaceno u UnitOfWork
+            //services.AddScoped<IMessageRepository, MessageRepository>(); // prebaceno u UnitOfWork
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddSignalR();
+            services.AddSingleton<PresenceTracker>(); // dodan kao Singleton (kako bi vidjeli koji su korisnici online) i dostupan je svim korisnicima kroz citavu aplikaciju
 
             return services;
         }

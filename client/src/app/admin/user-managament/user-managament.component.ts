@@ -13,7 +13,7 @@ export class UserManagamentComponent implements OnInit {
   users: User[] = [];
   bsModalRef: BsModalRef<RolesModalComponent> =
     new BsModalRef<RolesModalComponent>();
-  availableRoles = ['Admin', 'Moderator', 'Member']; // imamo samo tri, pa smo zakucalim inace mogu sam vuci iz bazeis tabele aspNetRoles, u admin kontroleru ih dovuci i pozvato servis npr.
+  availableRoles = ['Admin', 'Moderator', 'Member']; // imamo samo tri, pa smo zakucalim inace mogu sam vuci iz baze iz tabele aspNetRoles, u admin kontroleru ih dovuci i pozvato servis npr.
 
   constructor(
     private adminService: AdminService,

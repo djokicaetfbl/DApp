@@ -3,6 +3,7 @@ import { Injectable, OnInit } from '@angular/core';
 import { BehaviorSubject, map } from 'rxjs';
 import { User } from '../_models/user';
 import { environment } from 'src/environments/environment.development';
+import { PresenceService } from './presence.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,10 @@ export class AccountService {
   private currentUserSource = new BehaviorSubject<User | null>(null); // moze biti User ili null
   currentUser$ = this.currentUserSource.asObservable(); // dolar naglasava da je u pitanju observable
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private presenceService: PresenceService
+  ) {} //PresenceService je za potrebe SignalR-a
 
   login(model: any) {
     return this.http.post<User>(this.baseUrl + 'account/login', model).pipe(
@@ -43,11 +47,13 @@ export class AccountService {
     //localStorage.setItem('user', JSON.stringify(user.username));
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);
+    this.presenceService.createHubConnection(user); // da slusa za potrebe SignalR-a konekcija Hub metode
   }
 
   logout() {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
+    this.presenceService.stopHubConnection();
   }
 
   getDecodedToken(token: string) {
