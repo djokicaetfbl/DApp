@@ -1,5 +1,5 @@
 export const environment = {
-  production: false,
+  production: true,
   apiUrl: 'https://localhost:5001/api/',
   hubUrl: 'https://localhost:5001/hubs/' /* link za hub za SignalR */,
 };
